@@ -37,16 +37,14 @@ class TemplateRestController {
 			})
     public Response templateMethod(@PathVariable("id") String id) {
 		  Response resp = new Response();
-		  resp.setId("100");
-		  resp.setUsageamount("200 M");
+		  System.out.println("Service Invoked--------------------------");
 	      return resp;
     }
 	
 	public Response fallbackOperation(String str){
 		   Response resp = new Response();
-		  resp.setId("1002");
-		  resp.setUsageamount("8200 M");
-	      return resp;
+			System.out.println("Fallback Service Invoked--------------------------");
+	      	return resp;
 	   }
 
 }	

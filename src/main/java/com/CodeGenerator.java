@@ -3,14 +3,20 @@ package com;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
@@ -33,6 +39,9 @@ public class CodeGenerator {
 	private static String srcSDLPath = "";
 	private static String srcJSONPath = "";
 	private static String srcJavaPath = "";
+	private static String inUsePorts = "";
+	private static String unUsedPort = "";
+	private static String dockerAccount = "";
 
 	public static void main(String[] args) throws IOException {
 		readConfigurationProperties();
@@ -49,7 +58,8 @@ public class CodeGenerator {
 		updateBootstrapProperties(map);
 	}
 
-	private static void readConfigurationProperties() {
+	private static void readConfigurationProperties() throws IOException {
+		int count=0;
 		ResourceBundle mybundle = ResourceBundle.getBundle("com.configurations_en_US");
 		projectPath = mybundle.getString("TARGET_PROJECT_PATH");
 		srcFiles = mybundle.getString("TARGET_SOURCE_FILES");
@@ -67,6 +77,31 @@ public class CodeGenerator {
 		srcSDLPath = mybundle.getString("SRC_SDL_PATH");
 		srcJSONPath = mybundle.getString("SRC_RESPONSE_JSON_PATH");
 		srcJavaPath = mybundle.getString("SRC_JAVA_PATH");
+		dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
+		
+		updatePropertiesForServerPort(count, mybundle);
+	}
+
+	private  static void updatePropertiesForServerPort(int count, ResourceBundle mybundle)
+			throws IOException, FileNotFoundException {
+		inUsePorts = mybundle.getString("IN_USE_PORTS");
+		inUsePorts = inUsePorts.trim();
+		String[] portsArray = inUsePorts.split(":");
+		for(String port: portsArray){
+			count++;
+		}
+		unUsedPort = portsArray[count-1].trim();
+		int portVal = Integer.parseInt(unUsedPort.trim())+10;
+		inUsePorts = inUsePorts + ":"+String.valueOf(portVal);
+		System.out.println("inusePorts=="+inUsePorts);
+		Properties p = new Properties();
+		InputStream in = new FileInputStream("C:\\software\\microservicesKubernetes\\msprojectgenerator\\src\\main\\java\\com\\configurations_en_US.properties");
+		p.load(in);
+		OutputStream outputStream = new FileOutputStream("C:\\software\\microservicesKubernetes\\msprojectgenerator\\src\\main\\java\\com\\configurations_en_US.properties");
+		p.setProperty("IN_USE_PORTS", inUsePorts);
+		p.store(outputStream, null);
+		outputStream.close();
+		outputStream.flush();
 	}
 
 	private static void updateBootstrapProperties(Map<String, String> map) throws IOException {
@@ -74,11 +109,11 @@ public class CodeGenerator {
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
-			System.out.println("line="+content);
 			line= line + content;
 			line = line+"\n";			
 		}
 		line = line.replaceAll("template_name", map.get("name"));
+		line = line.replaceAll("template_port", unUsedPort);
 		BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\msproject\\src\\main\\resources\\bootstrap.properties"));	
 		bw.write(line);
 		bw.flush();bw.close();
@@ -90,7 +125,6 @@ public class CodeGenerator {
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
-			System.out.println("line="+content);
 			line= line + content;
 			line = line+"\n";			
 		}
@@ -113,6 +147,7 @@ public class CodeGenerator {
 			line = line+"\n";			
 		}
 		line = line.replaceAll("templateservice", map.get("name"));
+		line = line.replaceAll("templateport", unUsedPort);
 		String path = "C:\\msproject\\"+map.get("name")+"service.yml";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(path));	
 		bw.write(line);
@@ -127,12 +162,14 @@ public class CodeGenerator {
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
-			System.out.println("line="+content);
 			line= line + content;
 			line = line+"\n";			
 		}
 		line = line.replaceAll("templatename", map.get("name"));
+		line = line.replaceAll("templateport", unUsedPort);
+		line = line.replaceAll("templateimage", dockerAccount+"\\\\"+map.get("name"));
 		String path = "C:\\msproject\\"+map.get("name")+"deployment.yml";
+		System.out.println("path====="+path);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(path));	
 		bw.write(line);
 		bw.flush();bw.close();
@@ -146,7 +183,6 @@ public class CodeGenerator {
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
-			System.out.println("line="+content);
 			line= line + content;
 			line = line+"\n";			
 		}
@@ -163,7 +199,6 @@ public class CodeGenerator {
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
-			System.out.println("line="+content);
 			line= line + content;
 			line = line+"\n";			
 		}
@@ -174,6 +209,14 @@ public class CodeGenerator {
 
 	private static void createResponseBean(Map<String, String> map) throws IOException {
 		String responseBeanDef = map.get("UsageResponse");
+		Set<Map.Entry<String,String>> set = map.entrySet();
+		for (Map.Entry<String,String> me : set) 
+        {
+            System.out.print(me.getKey() + ": ");
+            if(me.getKey().contains("Response")){
+            	responseBeanDef = me.getValue();
+            }
+          }
 		responseBeanDef = responseBeanDef.substring(1,responseBeanDef.length()-1);
 		String jsonStr = "{";
 		String[] strArray = responseBeanDef.split(",");
@@ -181,7 +224,7 @@ public class CodeGenerator {
 			 String tempStr = strArray[i];
 			 String[] str = tempStr.split("=");
 			 System.out.println(str[0]+" "+str[1]);
-			 jsonStr = jsonStr +  str[0] +  ":" +  str[1] +",";
+			 jsonStr = jsonStr + "\"" +str[0]  +"\""+ ":" + "\"" + str[1]+"\"" +",";
 		}
 		jsonStr = jsonStr.substring(0, jsonStr.length()-1)+ "}";
 			System.out.println("jsonstr = "+jsonStr);
@@ -207,7 +250,6 @@ public class CodeGenerator {
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
-			System.out.println("line="+content);
 			line= line + content;
 			line = line+"\n";
 			
@@ -233,7 +275,6 @@ public class CodeGenerator {
 	    	    BufferedWriter bwriter = new BufferedWriter(new FileWriter(tagetDirectory));
 	    	    String sCurrentLine;
 	    	    while((sCurrentLine = br.readLine()) != null){
-	    	    	System.out.println("sCurrentLine=="+sCurrentLine);
 	    	    	bwriter.write(sCurrentLine);
 	    	    	bwriter.newLine();
 	    	    }
@@ -253,11 +294,24 @@ public class CodeGenerator {
 
 		while ((sCurrentLine = br.readLine()) != null) {
 			System.out.println(sCurrentLine);
-			String[] strray = sCurrentLine.split(":");
-			System.out.print("key="+strray[0]);
-			System.out.println("   value="+strray[1]);
-			map.put(strray[0], strray[1]);
+			if(null !=sCurrentLine ){
+				if(sCurrentLine.startsWith("'")){
+					sCurrentLine = sCurrentLine.substring(1);
+					
+				}
+				if(sCurrentLine.endsWith("'")){
+					sCurrentLine = sCurrentLine.substring(0, sCurrentLine.length()-1);
+				}
+				System.out.println("sCurrentLine=="+sCurrentLine);
+				String[] strray = sCurrentLine.split(":");
+				if(strray!=null && strray.length>1){
+					System.out.print("key="+strray[0]);
+					System.out.println("   value="+strray[1]);
+					map.put(strray[0], strray[1]);
+				}
+			}
 		}
+		System.out.println("map=="+map);
 		return map;
 	}
 

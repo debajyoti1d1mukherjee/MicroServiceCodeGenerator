@@ -15,45 +15,27 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "id",
-    "usageamount"
+    "balance"
 })
 public class Response {
 
-    @JsonProperty("id")
-    private String id;
-    @JsonProperty("usageamount")
-    private String usageamount;
+    @JsonProperty("balance")
+    private String balance;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("id")
-    public String getId() {
-        return id;
+    @JsonProperty("balance")
+    public String getBalance() {
+        return balance;
     }
 
-    @JsonProperty("id")
-    public void setId(String id) {
-        this.id = id;
+    @JsonProperty("balance")
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 
-    public Response withId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    @JsonProperty("usageamount")
-    public String getUsageamount() {
-        return usageamount;
-    }
-
-    @JsonProperty("usageamount")
-    public void setUsageamount(String usageamount) {
-        this.usageamount = usageamount;
-    }
-
-    public Response withUsageamount(String usageamount) {
-        this.usageamount = usageamount;
+    public Response withBalance(String balance) {
+        this.balance = balance;
         return this;
     }
 
@@ -79,7 +61,7 @@ public class Response {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(usageamount).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(balance).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -91,7 +73,7 @@ public class Response {
             return false;
         }
         Response rhs = ((Response) other);
-        return new EqualsBuilder().append(id, rhs.id).append(usageamount, rhs.usageamount).append(additionalProperties, rhs.additionalProperties).isEquals();
+        return new EqualsBuilder().append(balance, rhs.balance).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
 }

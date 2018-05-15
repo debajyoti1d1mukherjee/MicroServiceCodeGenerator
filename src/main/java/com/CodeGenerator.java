@@ -42,8 +42,17 @@ public class CodeGenerator {
 	private static String inUsePorts = "";
 	private static String unUsedPort = "";
 	private static String dockerAccount = "";
+	private static String targetServiceProperties = "";
+	private static String targetMvnConfPath= "";
+	private static String targetTemplateServicePath="";
+	private static String targetTemplateDeploymentPath = "";
+	private static String targetDockerFilePath = "";
+	private static String srcRespObjectPath = "";
+	private static String srcDirPath = "";
+	private static String codeCommitBatchPath = "";
+	private static String outputPath = "";
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		readConfigurationProperties();
 		createDirectoryStructure();
 		Map<String,String> map= readSDL();
@@ -56,7 +65,9 @@ public class CodeGenerator {
 		updateServiceYML(map);
 		updatePOM(map);
 		updateBootstrapProperties(map);
+		writeOutputFile();
 	}
+
 
 	private static void readConfigurationProperties() throws IOException {
 		int count=0;
@@ -78,8 +89,23 @@ public class CodeGenerator {
 		srcJSONPath = mybundle.getString("SRC_RESPONSE_JSON_PATH");
 		srcJavaPath = mybundle.getString("SRC_JAVA_PATH");
 		dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
-		
-		updatePropertiesForServerPort(count, mybundle);
+		targetServiceProperties = mybundle.getString("TARGET_SERVICE_PROPERTIES");
+		targetMvnConfPath = mybundle.getString("MAVEN_CONFIGURATION_PATH");
+		targetTemplateServicePath = mybundle.getString("TARGET_TEMPLATE_SERVICE_PATH");
+		targetTemplateDeploymentPath = mybundle.getString("TARGET_TEMPLATE_DEPLOYMENT_PATH");
+		targetDockerFilePath = mybundle.getString("TARGET_DOCKER_FILE_PATH");
+		srcRespObjectPath = mybundle.getString("SRC_RESPONSE_OBJECT_PATH");
+		srcDirPath = mybundle.getString("SRC_SDL_DIRECTORY_PATH");
+		codeCommitBatchPath = mybundle.getString("TARGET_CODE_COMMIT_BATCH_PATH");
+		outputPath= mybundle.getString("SRC_EOP_FILE");		
+		updatePropertiesForServerPort(count, mybundle);		
+	}
+	
+	private static void writeOutputFile() throws IOException {
+		//File f = new File("C:\\software\\microservicesKubernetes\\CodeGenerator\\output_yml\\test.txt");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));	
+		bw.write("output generated...");
+		bw.flush();bw.close();
 	}
 
 	private  static void updatePropertiesForServerPort(int count, ResourceBundle mybundle)
@@ -105,7 +131,7 @@ public class CodeGenerator {
 	}
 
 	private static void updateBootstrapProperties(Map<String, String> map) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\msproject\\src\\main\\resources\\bootstrap.properties"));
+		BufferedReader br = new BufferedReader(new FileReader(targetServiceProperties));
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
@@ -114,14 +140,14 @@ public class CodeGenerator {
 		}
 		line = line.replaceAll("template_name", map.get("name"));
 		line = line.replaceAll("template_port", unUsedPort);
-		BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\msproject\\src\\main\\resources\\bootstrap.properties"));	
+		BufferedWriter bw = new BufferedWriter(new FileWriter(targetServiceProperties));	
 		bw.write(line);
 		bw.flush();bw.close();
 		
 	}
 
 	private static void updatePOM(Map<String, String> map) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\msproject\\pom.xml"));
+		BufferedReader br = new BufferedReader(new FileReader(targetMvnConfPath));
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
@@ -131,14 +157,14 @@ public class CodeGenerator {
 		line = line.replaceAll("template_group", map.get("name")+"-code_generation_automation");
 		line = line.replaceAll("template_artifact", map.get("name"));
 		line = line.replaceAll("template.jar", map.get("name")+".jar");
-		String path = "C:\\msproject\\pom.xml";
+		String path = targetMvnConfPath;
 		BufferedWriter bw = new BufferedWriter(new FileWriter(path));	
 		bw.write(line);
 		bw.flush();bw.close();
 	}
 
 	private static void updateServiceYML(Map<String, String> map) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\msproject\\templateservice.yaml"));
+		BufferedReader br = new BufferedReader(new FileReader(targetTemplateServicePath));
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
@@ -148,17 +174,17 @@ public class CodeGenerator {
 		}
 		line = line.replaceAll("templateservice", map.get("name"));
 		line = line.replaceAll("templateport", unUsedPort);
-		String path = "C:\\msproject\\"+map.get("name")+"service.yml";
+		String path = projectPath+"\\"+map.get("name")+"service.yml";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(path));	
 		bw.write(line);
 		bw.flush();bw.close();
-		File file = new File("C:\\msproject\\templateservice.yaml");
+		File file = new File(targetTemplateServicePath);
 		file.deleteOnExit();
 		
 	}
 
 	private static void updateDeploymentYML(Map<String, String> map) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\msproject\\templatedeployment.yaml"));
+		BufferedReader br = new BufferedReader(new FileReader(targetTemplateDeploymentPath));
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
@@ -168,18 +194,18 @@ public class CodeGenerator {
 		line = line.replaceAll("templatename", map.get("name"));
 		line = line.replaceAll("templateport", unUsedPort);
 		line = line.replaceAll("templateimage", dockerAccount+"\\\\"+map.get("name"));
-		String path = "C:\\msproject\\"+map.get("name")+"deployment.yml";
+		String path = projectPath +"\\"+map.get("name")+"deployment.yml";
 		System.out.println("path====="+path);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(path));	
 		bw.write(line);
 		bw.flush();bw.close();
-		File file = new File("C:\\msproject\\templatedeployment.yaml");
+		File file = new File(targetTemplateDeploymentPath);
 		file.deleteOnExit();
 		
 	}
 
 	private static void updateDockerfile(Map<String, String> map) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\msproject\\src\\main\\docker\\Dockerfile"));
+		BufferedReader br = new BufferedReader(new FileReader(targetDockerFilePath));
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
@@ -188,14 +214,13 @@ public class CodeGenerator {
 		}
 		line = line.replaceAll("template_app", map.get("name"));
 		line = line.replaceAll("template_app.jar", map.get("name")+".jar");
-		BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\msproject\\src\\main\\docker\\Dockerfile"));	
+		BufferedWriter bw = new BufferedWriter(new FileWriter(targetDockerFilePath));	
 		bw.write(line);
-		bw.flush();bw.close();
-		
+		bw.flush();bw.close();		
 	}
 
 	private static void copyResponseBean() throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader("C:\\software\\microservicesKubernetes\\msprojectgenerator\\src\\main\\java\\com\\Response.java"));
+		BufferedReader br = new BufferedReader(new FileReader(srcRespObjectPath));
 		String content ="";
 		String line = "";
 		while((content = br.readLine()) != null){
@@ -288,7 +313,18 @@ public class CodeGenerator {
 	
 
 	private static Map<String,String> readSDL() throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(srcSDLPath));
+		BufferedReader br = null;
+		File directory = new File(srcDirPath);
+		System.out.println("directory=="+directory);
+		File[] fileList = directory.listFiles();
+		System.out.println("fileList=="+fileList.length);
+		File sdlFile = fileList[0];
+		if(null != sdlFile){
+			 br = new BufferedReader(new FileReader(sdlFile));
+		}else{
+			 br = new BufferedReader(new FileReader(srcSDLPath));
+		}
+		
 		String sCurrentLine;
 		Map<String,String> map = new HashMap<String,String>();
 

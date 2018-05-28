@@ -26,6 +26,7 @@ public class JsonToPojo {
 		try {
 			new JsonToPojo().convert2JSON(inputJson.toURI().toURL(), outputPojoDirectory, packageName,
 					inputJson.getName().replace(".json", ""));
+			System.out.println("pojo created");
 		} catch (IOException e) {			
 			System.out.println("Encountered issue while converting to pojo: " + e.getMessage());
 			e.printStackTrace();

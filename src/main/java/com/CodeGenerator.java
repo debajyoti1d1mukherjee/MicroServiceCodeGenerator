@@ -153,12 +153,12 @@ public class CodeGenerator {
 				line = line + "\n";
 			}
 			line = line.replaceAll("template_name", map.get("name"));
-			line = line.replaceAll("template_port", String.valueOf(port));
+			line = line.replaceAll("template_port", String.valueOf(port).trim().replaceAll("\\s+",""));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(targetServiceProperties));
 			bw.write(line);
 			bw.flush();
 			bw.close();
-			dockerPortMap.put(map.get("name"), String.valueOf(port));
+			dockerPortMap.put(map.get("name"), String.valueOf(port).trim());
 		}
 
 	}
@@ -197,7 +197,7 @@ public class CodeGenerator {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templateservice", map.get("name"));
+			line = line.replaceAll("templateservice", map.get("name").trim().toLowerCase());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			String path = projectPath + "\\" +map.get("name") +"\\"+map.get("name") + "service.yml";
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
@@ -221,9 +221,9 @@ public class CodeGenerator {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templatename", map.get("name"));
+			line = line.replaceAll("templatename", map.get("name").trim().toLowerCase());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
-			line = line.replaceAll("templateimage", dockerAccount + "\\\\" + map.get("name"));
+			line = line.replaceAll("templateimage", dockerAccount + "\\/" + map.get("name").trim().toLowerCase());
 			String path = projectPath + "\\" +map.get("name") +"\\"+map.get("name") +"deployment.yml";
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
 			bw.write(line);
@@ -248,7 +248,9 @@ public class CodeGenerator {
 				line = line + "\n";
 			}
 			line = line.replaceAll("template_app", map.get("name"));
-			line = line.replaceAll("template_app.jar", map.get("name") + ".jar");
+			String replaceWith = "/target/"+map.get("name") + "-0.0.1-SNAPSHOT.jar";
+			System.out.println("replaceWith==="+replaceWith);
+			line = line.replaceAll("/target/XtemplateX_app.jar", replaceWith);
 			line = line.replaceAll("template_port", dockerPortMap.get(map.get("name")));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(targetDockerFilePath));
 			bw.write(line);

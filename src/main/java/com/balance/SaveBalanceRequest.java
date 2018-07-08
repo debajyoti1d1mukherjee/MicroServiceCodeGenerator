@@ -1,5 +1,5 @@
 
-package com;
+package com.balance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,27 +15,45 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "balance"
+    "id",
+    "name"
 })
-public class Response {
+public class SaveBalanceRequest {
 
-    @JsonProperty("balance")
-    private String balance;
+    @JsonProperty("id")
+    private String id;
+    @JsonProperty("name")
+    private String name;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("balance")
-    public String getBalance() {
-        return balance;
+    @JsonProperty("id")
+    public String getId() {
+        return id;
     }
 
-    @JsonProperty("balance")
-    public void setBalance(String balance) {
-        this.balance = balance;
+    @JsonProperty("id")
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Response withBalance(String balance) {
-        this.balance = balance;
+    public SaveBalanceRequest withId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public SaveBalanceRequest withName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -54,14 +72,14 @@ public class Response {
         this.additionalProperties.put(name, value);
     }
 
-    public Response withAdditionalProperty(String name, Object value) {
+    public SaveBalanceRequest withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(balance).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(id).append(name).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -69,11 +87,11 @@ public class Response {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Response) == false) {
+        if ((other instanceof SaveBalanceRequest) == false) {
             return false;
         }
-        Response rhs = ((Response) other);
-        return new EqualsBuilder().append(balance, rhs.balance).append(additionalProperties, rhs.additionalProperties).isEquals();
+        SaveBalanceRequest rhs = ((SaveBalanceRequest) other);
+        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
 }

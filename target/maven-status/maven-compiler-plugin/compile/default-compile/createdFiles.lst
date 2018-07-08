@@ -1,4 +1,9 @@
-beangenerator\JsonToPojo.class
+com\MultipleMrthodTester.class
+com\balance\SaveBalanceRequest.class
+com\CodeGeneratorMultiplemethods.class
+com\balance\GetBalanceResponse.class
 beangenerator\JsonToPojo$1.class
+com\balance\SaveBalanceResponse.class
 com\CodeGenerator.class
 com\Response.class
+beangenerator\JsonToPojo.class

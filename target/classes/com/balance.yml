@@ -1,12 +1,9 @@
-'name:Balance
+'name:balance
+
   balanceRequest:{id=String}
+
   balanceResponse:{balance=String}
+
   fallbackmathodrequired:Y
-  crudrequired:Y'
-  
-  
-  
-  
-  
-  
-  
+
+  crudrequired:N'

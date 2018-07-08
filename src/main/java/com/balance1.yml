@@ -1,0 +1,4 @@
+'name:balance
+  Method1:GET;getBalance;getBalanceRequest&{id=String};getBalanceResponse&{balance=String};fallbackmathodrequired=Y
+  Method2:POST;saveBalance;saveBalanceRequest&{id=String,name=String};saveBalanceResponse&{balance=String,name=String};fallbackmathodrequired=Y  
+  crudrequired:N'

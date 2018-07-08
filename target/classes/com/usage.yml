@@ -1,11 +1,9 @@
-'name:Usage
+'name:usage
+
   usageRequest:{id=String}
+
   usageResponse:{usage=String}
+
   fallbackmathodrequired:Y
+
   crudrequired:N'
-  
-  
-  
-  
-  
-  

@@ -1,5 +1,5 @@
 
-package com;
+package com.balance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
     "balance"
 })
-public class Response {
+public class GetBalanceResponse {
 
     @JsonProperty("balance")
     private String balance;
@@ -34,7 +34,7 @@ public class Response {
         this.balance = balance;
     }
 
-    public Response withBalance(String balance) {
+    public GetBalanceResponse withBalance(String balance) {
         this.balance = balance;
         return this;
     }
@@ -54,7 +54,7 @@ public class Response {
         this.additionalProperties.put(name, value);
     }
 
-    public Response withAdditionalProperty(String name, Object value) {
+    public GetBalanceResponse withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }
@@ -69,10 +69,10 @@ public class Response {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Response) == false) {
+        if ((other instanceof GetBalanceResponse) == false) {
             return false;
         }
-        Response rhs = ((Response) other);
+        GetBalanceResponse rhs = ((GetBalanceResponse) other);
         return new EqualsBuilder().append(balance, rhs.balance).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 

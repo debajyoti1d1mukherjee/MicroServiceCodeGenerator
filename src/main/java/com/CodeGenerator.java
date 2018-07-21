@@ -197,7 +197,7 @@ public class CodeGenerator {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templateservice", map.get("name").trim().toLowerCase());
+			line = line.replaceAll("templateservice", map.get("name").trim());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			String path = projectPath + "\\" +map.get("name") +"\\"+map.get("name") + "service.yml";
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
@@ -221,7 +221,7 @@ public class CodeGenerator {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templatename", map.get("name").trim().toLowerCase());
+			line = line.replaceAll("templatename", map.get("name").trim());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			line = line.replaceAll("templateimage", dockerAccount + "\\/" + map.get("name").trim().toLowerCase());
 			String path = projectPath + "\\" +map.get("name") +"\\"+map.get("name") +"deployment.yml";

@@ -197,7 +197,7 @@ public class CodeGeneratorMultiplemethods {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templateservice", map.get("name").trim().toLowerCase());
+			line = line.replaceAll("templateservice", map.get("name").trim());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "service.yml";
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
@@ -221,7 +221,7 @@ public class CodeGeneratorMultiplemethods {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templatename", map.get("name").trim().toLowerCase());
+			line = line.replaceAll("templatename", map.get("name").trim());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			line = line.replaceAll("templateimage", dockerAccount + "\\/" + map.get("name").trim().toLowerCase());
 			String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "deployment.yml";
@@ -259,67 +259,7 @@ public class CodeGeneratorMultiplemethods {
 		}
 	}
 
-	private static void copyBean(String path, String serviceName, String beanName) throws IOException {
 
-		String scrPath = srcRespObjectPath + path + "\\" + beanName + ".java";
-		BufferedReader br = new BufferedReader(new FileReader(scrPath));
-		String content = "";
-		String line = "";
-		while ((content = br.readLine()) != null) {
-			line = line + content;
-			line = line + "\n";
-		}
-		File f = new File(projectPath + "\\" + serviceName + "\\src\\main\\java\\" + path + "\\");
-		if (!f.exists()) {
-			f.mkdirs();
-		}
-		targetRespBean = projectPath + "\\" + serviceName + "\\src\\main\\java\\" + path + "\\" + beanName + ".java";
-		File file = new File(targetRespBean);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-		bw.write(line);
-		bw.flush();
-		bw.close();
-
-	}
-
-	private static void createBean(String beanDefination, String serviceName, String type, String name)
-			throws IOException {
-		String path = "";
-		if ("request".equalsIgnoreCase(type)) {
-			path = srcJSONRequestPath;
-			path = path.substring(0, path.indexOf("request.json"));
-			path = path + name;
-		} else if ("response".equalsIgnoreCase(type)) {
-			path = srcJSONRespPath;
-			path = path.substring(0, path.indexOf("response.json"));
-			path = path + name;
-		}
-		String beanDef = "";
-
-		beanDef = beanDefination.substring(1, beanDefination.length() - 1);
-		String jsonStr = "{";
-		String[] strArray = beanDef.split(",");
-		for (int i = 0; i < strArray.length; i++) {
-			String tempStr = strArray[i];
-			String[] str = tempStr.split("=");
-			jsonStr = jsonStr + "\"" + str[0] + "\"" + ":" + "\"" + str[1] + "\"" + ",";
-		}
-		jsonStr = jsonStr.substring(0, jsonStr.length() - 1) + "}";
-		BufferedWriter bw = new BufferedWriter(new FileWriter(path));
-		bw.write(jsonStr);
-		bw.flush();
-		bw.close();
-		File inputJson = new File(path);
-		File outputPojoDirectory = new File(srcJavaPath);
-		outputPojoDirectory.mkdirs();
-		try {
-			new JsonToPojo().convert2JSON(inputJson.toURI().toURL(), outputPojoDirectory, "com." + serviceName,
-					inputJson.getName().replace(".json", ""));
-		} catch (IOException e) {
-			System.out.println("Encountered issue while converting to pojo: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
 
 	private static void createServiceFromDefination(List<Map<String, String>> list) throws IOException {
 		for (Map<String, String> map : list) {
@@ -384,63 +324,7 @@ public class CodeGeneratorMultiplemethods {
 		}
 	}
 
-	private static String createMethod(Map<String, String> map, String templateGetMethod, String templatePostMethod,
-			String methodAppender, String methodType, String methodName, String requestName, String requestDef,
-			String responseName, String responseDef , String getFallBckMethod , String postFallBckMethod) throws IOException {
-		if ("GET".equalsIgnoreCase(methodType)) {
-			createBean(responseDef, map.get("name"), "response", responseName);
-			String tempGetMethod = templateGetMethod;
-			tempGetMethod = tempGetMethod.replaceAll("templateMethod", methodName);
-			String capRespName = responseName.substring(0, 1).toUpperCase() + responseName.substring(1);
-			tempGetMethod = tempGetMethod.replaceAll("TemplateResponse", "com." + map.get("name") + "." + capRespName);
-			copyBean("com\\" + map.get("name"), map.get("name"), capRespName);
-			tempGetMethod = tempGetMethod.replaceAll("TEMPLATE_METHOD_TYPE", methodType);
-			methodAppender = methodAppender + "\n";
-			methodAppender = methodAppender + tempGetMethod;
-			methodAppender = appendGetFallBackMethod(map, methodAppender, methodName, getFallBckMethod, capRespName);
-			
-		} else if ("POST".equalsIgnoreCase(methodType)) {
-			createBean(requestDef, map.get("name"), "request", requestName);
-			createBean(responseDef, map.get("name"), "response", responseName);
-			String tempPostMethod = templatePostMethod;
-			tempPostMethod = tempPostMethod.replaceAll("templateMethod", methodName);
-			String capRespName = responseName.substring(0, 1).toUpperCase() + responseName.substring(1);
-			String capReqName = requestName.substring(0, 1).toUpperCase() + requestName.substring(1);
-			copyBean("com\\" + map.get("name"), map.get("name"), capRespName);
-			copyBean("com\\" + map.get("name"), map.get("name"), capReqName);
-			tempPostMethod = tempPostMethod.replaceAll("TemplateResponse",
-					"com." + map.get("name") + "." + capRespName);
-			tempPostMethod = tempPostMethod.replaceAll("TempleteRequest", "com." + map.get("name") + "." + capReqName);
-			tempPostMethod = tempPostMethod.replaceAll("TEMPLATE_METHOD_TYPE", methodType);
-			methodAppender = methodAppender + "\n";
-			methodAppender = methodAppender + tempPostMethod;
-			methodAppender = appendPostFallBackMethod(map, methodAppender, methodName, postFallBckMethod, capRespName,
-					capReqName);
-		}
-		return methodAppender;
-	}
 
-	private static String appendPostFallBackMethod(Map<String, String> map, String methodAppender, String methodName,
-			String postFallBckMethod, String capRespName, String capReqName) {
-		String tempPostFallBackMethod = postFallBckMethod;
-		tempPostFallBackMethod = tempPostFallBackMethod.replaceAll("templateMethod", methodName+"FallBack");
-		tempPostFallBackMethod = tempPostFallBackMethod.replaceAll("TempleteRequest", "com." + map.get("name") + "." + capReqName);
-		tempPostFallBackMethod = tempPostFallBackMethod.replaceAll("TemplateResponse",
-				"com." + map.get("name") + "." + capRespName);
-		methodAppender = methodAppender + "\n";
-		methodAppender = methodAppender + tempPostFallBackMethod;
-		return methodAppender;
-	}
-
-	private static String appendGetFallBackMethod(Map<String, String> map, String methodAppender, String methodName,
-			String getFallBckMethod, String capRespName) {
-		String tempGetFallBckMethod = getFallBckMethod;
-		tempGetFallBckMethod = tempGetFallBckMethod.replaceAll("templateMethod", methodName+"FallBack");
-		tempGetFallBckMethod = tempGetFallBckMethod.replaceAll("TemplateResponse", "com." + map.get("name") + "." + capRespName);
-		methodAppender = methodAppender + "\n";
-		methodAppender = methodAppender + tempGetFallBckMethod;
-		return methodAppender;
-	}
 
 
 

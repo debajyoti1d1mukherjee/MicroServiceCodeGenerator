@@ -1,0 +1,4 @@
+'name:Usage
+  Method1:GET;getUsage;getUsageRequest&{id=String};getUsageResponse&{usage=String};fallbackmathodrequired=Y
+  Method2:POST;saveUsage;saveUsageRequest&{id=String,name=String};saveUsageResponse&{usage=String,name=String};fallbackmathodrequired=Y  
+  crudrequired:N'

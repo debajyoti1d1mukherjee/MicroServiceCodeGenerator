@@ -78,31 +78,27 @@ public class CodeGeneratorMultiplemethods {
 
 	private static void readConfigurationProperties() throws IOException, URISyntaxException {
 		int count = 0;
-		ResourceBundle mybundle = ResourceBundle.getBundle("com.configurations_en_US");
+		ResourceBundle mybundle = ResourceBundle.getBundle("com.configurations_multiple_methods_en_US");
 		ports = ResourceBundle.getBundle("com.ports_en_US");
-		srcSettings = mybundle.getString("SRC_SETTINGS");
-		srcMvn = mybundle.getString("SRC_MVN");
-		srcTobCopied = mybundle.getString("SRC_TO_BE_COPIED_FILES");
-		srcProperties = mybundle.getString("SRC_TO_BE_COPIED_PROPERTIES");
-		srcDocker = mybundle.getString("SRC_TO_BE_COPIED_DOCKER");
-		srcTemplateService = mybundle.getString("SRC_TEMPLATE_SERVICE");
-		srcSDLPath = mybundle.getString("SRC_SDL_PATH");
-		srcJSONRequestPath = mybundle.getString("SRC_REQUEST_JSON_PATH");
-		srcJSONRespPath = mybundle.getString("SRC_RESPONSE_JSON_PATH");
-		srcJavaPath = mybundle.getString("SRC_JAVA_PATH");
-		dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
-		srcRespObjectPath = mybundle.getString("SRC_RESPONSE_OBJECT_PATH_To_BE_COPIED");
-		srcDirPath = mybundle.getString("SRC_SDL_DIRECTORY_PATH");
-		codeCommitBatchPath = mybundle.getString("TARGET_CODE_COMMIT_BATCH_PATH");
-		outputPath = mybundle.getString("SRC_EOP_FILE");
 		projectPath = mybundle.getString("TARGET_PROJECT_PATH");
 		srcRootPath = mybundle.getString("SRC_PROJECT_ROOT_PATH");
+		srcSettings = srcRootPath + "\\src\\main\\java\\tobecopied\\.settings";
+		srcMvn = srcRootPath + "\\src\\main\\java\\tobecopied\\.mvn";
+		srcTobCopied = srcRootPath + "\\src\\main\\java\\tobecopied\\files";
+		srcProperties = srcRootPath + "\\src\\main\\java\\tobecopied\\properties";
+		srcDocker = srcRootPath + "\\src\\main\\java\\tobecopied\\docker";
+		srcTemplateService = srcRootPath + "\\src\\main\\java\\com\\TemplateService";
+		srcSDLPath = srcRootPath + "\\src\\main\\java\\com\\usage.yml";
+		srcJSONRequestPath = srcRootPath + "\\src\\main\\java\\com\\request.json";
+		srcJSONRespPath = srcRootPath + "\\src\\main\\java\\com\\response.json";
+		srcJavaPath = srcRootPath + "\\src\\main\\java";		
+		dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
+		srcRespObjectPath = srcRootPath + "\\src\\main\\java\\";
+		srcDirPath = srcRootPath + "\\src\\input_yml";
 		getLastUsedDockerPort(count, ports);
 	}
 
 	private static void writeOutputFile() throws IOException {
-		// File f = new
-		// File("C:\\software\\microservicesKubernetes\\CodeGenerator\\output_yml\\test.txt");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));
 		bw.write("output generated...");
 		bw.flush();
@@ -251,7 +247,6 @@ public class CodeGeneratorMultiplemethods {
 			}
 			line = line.replaceAll("template_app", map.get("name"));
 			String replaceWith = "/target/" + map.get("name") + "-0.0.1-SNAPSHOT.jar";
-			System.out.println("replaceWith===" + replaceWith);
 			line = line.replaceAll("/target/XtemplateX_app.jar", replaceWith);
 			line = line.replaceAll("template_port", dockerPortMap.get(map.get("name")));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(targetDockerFilePath));
@@ -292,7 +287,6 @@ public class CodeGeneratorMultiplemethods {
 				if (me.getKey().contains("Method")) {
 					String methodStr = me.getValue();
 					String[] methodStrArr = methodStr.split(";");
-					System.out.println("methodStrArr===" + methodStrArr);
 					String methodType = methodStrArr[0];
 					String methodName = methodStrArr[1];
 					String request = methodStrArr[2];
@@ -358,7 +352,6 @@ public class CodeGeneratorMultiplemethods {
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		File directory = new File(srcDirPath);
 		File[] fileList = directory.listFiles();
-		System.out.println("Number of Files====" + fileList.length);
 		for (File sdlFile : fileList) {
 			// File sdlFile = fileList[0];
 			if (null != sdlFile) {
@@ -392,7 +385,6 @@ public class CodeGeneratorMultiplemethods {
 			}
 
 			list.add(map);
-			System.out.println("Number of map in list=" + list.size());
 		}
 		return list;
 	}

@@ -18,5 +18,5 @@ Class-Path: dependency-jars/jsonschema2pojo-core-0.4.35.jar dependency
  s-io-2.6.jar
 Build-Jdk: 1.8.0_101
 Created-By: Maven Integration for Eclipse
-Main-Class: com.CodeGenerator
+Main-Class: com.CodeGeneratorMultiplemethods
 

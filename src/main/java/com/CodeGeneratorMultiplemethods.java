@@ -60,6 +60,7 @@ public class CodeGeneratorMultiplemethods {
 	private static String targetRespBean = "";
 	private static Map<String, String> dockerPortMap = new HashMap<String, String>();
 	private static ResourceBundle ports = null;
+	private static String srcRootPath = "";
 
 	public static void main(String[] args) throws IOException, InterruptedException, URISyntaxException {
 		readConfigurationProperties();
@@ -95,6 +96,7 @@ public class CodeGeneratorMultiplemethods {
 		codeCommitBatchPath = mybundle.getString("TARGET_CODE_COMMIT_BATCH_PATH");
 		outputPath = mybundle.getString("SRC_EOP_FILE");
 		projectPath = mybundle.getString("TARGET_PROJECT_PATH");
+		srcRootPath = mybundle.getString("SRC_PROJECT_ROOT_PATH");
 		getLastUsedDockerPort(count, ports);
 	}
 
@@ -131,8 +133,8 @@ public class CodeGeneratorMultiplemethods {
 		InputStream in = CodeGeneratorMultiplemethods.class.getResourceAsStream("ports_en_US.properties");
 		System.out.println("in==" + in);
 		p.load(in);
-		OutputStream outputStream = new FileOutputStream(
-				"C:\\software\\microservicesKubernetes\\msprojectgenerator\\src\\main\\java\\com\\ports_en_US.properties");
+		String tempSrecRootPath = srcRootPath + "\\src\\main\\java\\com\\ports_en_US.properties";
+		OutputStream outputStream = new FileOutputStream(tempSrecRootPath);
 		p.setProperty("IN_USE_PORTS", inUsePorts);
 		p.store(outputStream, null);
 		outputStream.close();
@@ -334,8 +336,9 @@ public class CodeGeneratorMultiplemethods {
 			String tagetDirectory = projectPath + "\\" + map.get("name") + "\\src\\main\\java\\com\\" + serviceName;
 			File targetServiceFile = new File(tagetDirectory);
 			try {
+				String tempSrecRootPath = srcRootPath + "\\src\\main\\java\\com\\TemplateServiceMultipleMethods";
 				BufferedReader br = new BufferedReader(new FileReader(
-						"C:\\software\\microservicesKubernetes\\msprojectgenerator\\src\\main\\java\\com\\TemplateServiceMultipleMethods"));
+						tempSrecRootPath));
 				BufferedWriter bwriter = new BufferedWriter(new FileWriter(targetServiceFile));
 				String sCurrentLine;
 				while ((sCurrentLine = br.readLine()) != null) {

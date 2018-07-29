@@ -91,7 +91,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.CodeGenerator</mainClass>
+							<mainClass>com.CodeGeneratorMultiplemethods</mainClass>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
 					</archive>

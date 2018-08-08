@@ -1,4 +1,6 @@
 'name:balance
   Method1:GET;getBalance;getBalanceRequest&{id=String};getBalanceResponse&{balance=String};fallbackmathodrequired=Y
-  Method2:POST;saveBalance;saveBalanceRequest&{id=String,name=String};saveBalanceResponse&{balance=String,name=String};fallbackmathodrequired=Y  
+  Method2:POST;saveBalance;saveBalanceRequest&{id=String,name=String};saveBalanceResponse&{balance=String,name=String};fallbackmathodrequired=Y
+  Method3:GET;getBalance1;getBalanceRequest1&{id=String};getBalanceResponse1&{balance=String,testString=String};fallbackmathodrequired=Y
+  Method2:POST;saveBalance1;saveBalanceRequest1&{id=String,name=String};saveBalanceResponse1&{balance=String,name=String,vendor=String};fallbackmathodrequired=Y
   crudrequired:N'

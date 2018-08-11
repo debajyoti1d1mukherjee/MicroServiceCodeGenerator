@@ -1,4 +1,5 @@
 com\MultipleMrthodTester.class
+com\balance\GetBalanceResponse1.class
 com\balance\SaveBalanceRequest.class
 com\CodeGeneratorMultiplemethods.class
 com\balance\GetBalanceResponse.class
@@ -7,8 +8,10 @@ com\TemplateTokenizer.class
 com\ServiceAssembler.class
 beangenerator\JsonToPojo$1.class
 com\balance\SaveBalanceResponse.class
+com\balance\SaveBalanceRequest1.class
 com\CodeGenerator.class
 com\Response.class
 beangenerator\JsonToPojo.class
+com\balance\SaveBalanceResponse1.class
 com\Usage\SaveUsageResponse.class
 com\Usage\GetUsageResponse.class

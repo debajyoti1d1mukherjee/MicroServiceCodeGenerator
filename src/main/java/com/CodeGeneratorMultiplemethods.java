@@ -24,16 +24,13 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import com.factory.IServiceDefReader;
+import com.factory.ServiceDefReaderFactory;
+
 import beangenerator.JsonToPojo;
 
 public class CodeGeneratorMultiplemethods {
 	private static String projectPath = "";
-	private static String srcFiles = "";
-	private static String resourceFiles = "";
-	private static String dockerPath = "";
-	private static String targetPath = "";
-	private static String settingsFile = "";
-	private static String mvnPath = "";
 	private static String srcSettings = "";
 	private static String srcMvn = "";
 	private static String srcTobCopied = "";
@@ -54,26 +51,33 @@ public class CodeGeneratorMultiplemethods {
 	private static String targetDockerFilePath = "";
 	private static String srcRespObjectPath = "";
 	private static String srcDirPath = "";
-	private static String codeCommitBatchPath = "";
 	private static String outputPath = "";
 	private static String dockerPort = "";
-	private static String targetRespBean = "";
 	private static Map<String, String> dockerPortMap = new HashMap<String, String>();
 	private static ResourceBundle ports = null;
 	private static String srcRootPath = "";
 
 	public static void main(String[] args) throws IOException, InterruptedException, URISyntaxException {
 		readConfigurationProperties();
-		List<Map<String, String>> serviceList = readSDL();
-		createDirectoryStructure(serviceList);
-		createTemplateService(serviceList);
-		createServiceFromDefination(serviceList);
-		updatePOM(serviceList);
-		updateBootstrapProperties(serviceList);
-		updatePropertiesForServerPort(0, ports);
-		updateDockerfile(serviceList);
-		updateDeploymentYML(serviceList);
-		updateServiceYML(serviceList);
+		List<Map<String, String>> serviceList = null;
+		try {
+			serviceList = readServiceDef();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (null != serviceList) {
+			createDirectoryStructure(serviceList);
+			createTemplateService(serviceList);
+			createServiceFromDefination(serviceList);
+			updatePOM(serviceList);
+			updateBootstrapProperties(serviceList);
+			updatePropertiesForServerPort(0, ports);
+			updateDockerfile(serviceList);
+			updateDeploymentYML(serviceList);
+			updateServiceYML(serviceList);
+		}else{
+			System.out.println("--INVALID SDL OR NO SDL--");
+		}
 	}
 
 	private static void readConfigurationProperties() throws IOException, URISyntaxException {
@@ -91,7 +95,7 @@ public class CodeGeneratorMultiplemethods {
 		srcSDLPath = srcRootPath + "\\src\\main\\java\\com\\usage.yml";
 		srcJSONRequestPath = srcRootPath + "\\src\\main\\java\\com\\request.json";
 		srcJSONRespPath = srcRootPath + "\\src\\main\\java\\com\\response.json";
-		srcJavaPath = srcRootPath + "\\src\\main\\java";		
+		srcJavaPath = srcRootPath + "\\src\\main\\java";
 		dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
 		srcRespObjectPath = srcRootPath + "\\src\\main\\java\\";
 		srcDirPath = srcRootPath + "\\src\\input_yml";
@@ -256,8 +260,6 @@ public class CodeGeneratorMultiplemethods {
 		}
 	}
 
-
-
 	private static void createServiceFromDefination(List<Map<String, String>> list) throws IOException {
 		for (Map<String, String> map : list) {
 			String serviceName = map.get("name") + "ServiceApplication.java";
@@ -298,16 +300,19 @@ public class CodeGeneratorMultiplemethods {
 					String[] responseArr = response.split("&");
 					String responseName = responseArr[0];
 					String responseDef = responseArr[1];
-					//String[] fallBckMethodArray = fallBckMethod.split("=");
-					//String fallBackMethodRequired = fallBckMethodArray[1];
+					// String[] fallBckMethodArray = fallBckMethod.split("=");
+					// String fallBackMethodRequired = fallBckMethodArray[1];
 
+					// methodAppender = createMethod(map, templateGetMethod,
+					// templatePostMethod, methodAppender,
+					// methodType, methodName, requestName, requestDef,
+					// responseName,
+					// responseDef,getFallBackMethod,postFallBackMethod);
 
-					//methodAppender = createMethod(map, templateGetMethod, templatePostMethod, methodAppender,
-					//		methodType, methodName, requestName, requestDef, responseName, responseDef,getFallBackMethod,postFallBackMethod);
-					
-					methodAppender = ServiceAssembler.createMethod(map, templateGetMethod, templatePostMethod, methodAppender, methodType, methodName, 
-							requestName, requestDef, responseName, responseDef, getFallBackMethod, postFallBackMethod, 
-							srcRespObjectPath, projectPath, "", srcJSONRequestPath, srcJSONRespPath, srcJavaPath);
+					methodAppender = ServiceAssembler.createMethod(map, templateGetMethod, templatePostMethod,
+							methodAppender, methodType, methodName, requestName, requestDef, responseName, responseDef,
+							getFallBackMethod, postFallBackMethod, srcRespObjectPath, projectPath, "",
+							srcJSONRequestPath, srcJSONRespPath, srcJavaPath);
 
 				}
 			}
@@ -320,10 +325,6 @@ public class CodeGeneratorMultiplemethods {
 		}
 	}
 
-
-
-
-
 	private static void createTemplateService(List<Map<String, String>> list) {
 		for (Map<String, String> map : list) {
 			String serviceName = map.get("name") + "ServiceApplication.java";
@@ -331,8 +332,7 @@ public class CodeGeneratorMultiplemethods {
 			File targetServiceFile = new File(tagetDirectory);
 			try {
 				String tempSrecRootPath = srcRootPath + "\\src\\main\\java\\com\\TemplateServiceMultipleMethods";
-				BufferedReader br = new BufferedReader(new FileReader(
-						tempSrecRootPath));
+				BufferedReader br = new BufferedReader(new FileReader(tempSrecRootPath));
 				BufferedWriter bwriter = new BufferedWriter(new FileWriter(targetServiceFile));
 				String sCurrentLine;
 				while ((sCurrentLine = br.readLine()) != null) {
@@ -347,46 +347,9 @@ public class CodeGeneratorMultiplemethods {
 		}
 	}
 
-	private static List<Map<String, String>> readSDL() throws IOException {
-		BufferedReader br = null;
-		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		File directory = new File(srcDirPath);
-		File[] fileList = directory.listFiles();
-		for (File sdlFile : fileList) {
-			// File sdlFile = fileList[0];
-			if (null != sdlFile) {
-				br = new BufferedReader(new FileReader(sdlFile));
-			} else {
-				br = new BufferedReader(new FileReader(srcSDLPath));
-			}
-
-			String sCurrentLine;
-			Map<String, String> map = new HashMap<String, String>();
-			Map<String, String> methodMap = new HashMap<String, String>();
-
-			while ((sCurrentLine = br.readLine()) != null) {
-				if (null != sCurrentLine) {
-					if (sCurrentLine.startsWith("'")) {
-						sCurrentLine = sCurrentLine.substring(1);
-
-					}
-					if (sCurrentLine.endsWith("'")) {
-						sCurrentLine = sCurrentLine.substring(0, sCurrentLine.length() - 1);
-					}
-					String[] strray = sCurrentLine.split(":");
-					if (strray != null && strray.length > 1) {
-						String key = strray[0];
-						String value = strray[1];
-
-						map.put(key, value);
-
-					}
-				}
-			}
-
-			list.add(map);
-		}
-		return list;
+	private static List<Map<String, String>> readServiceDef() throws Exception {
+		IServiceDefReader reader = ServiceDefReaderFactory.getServiceDefReader("default");
+		return reader.readDefination(srcDirPath, srcSDLPath);
 	}
 
 	private static void createDirectoryStructure(List<Map<String, String>> list) {

@@ -201,7 +201,8 @@ public class CodeGeneratorMultiplemethods {
 			String port = dockerPortMap.get(map.get("name"));
 			line = line.replaceAll("templateservice", map.get("name").trim());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
-			String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "service.yml";
+			//String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "service.yml";
+			String path = projectPath + "\\" + map.get("name") + "\\" +  "service.yml";
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
 			bw.write(line);
 			bw.flush();
@@ -226,7 +227,8 @@ public class CodeGeneratorMultiplemethods {
 			line = line.replaceAll("templatename", map.get("name").trim());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			line = line.replaceAll("templateimage", dockerAccount + "\\/" + map.get("name").trim().toLowerCase());
-			String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "deployment.yml";
+			//String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "deployment.yml";
+			String path = projectPath + "\\" + map.get("name") + "\\"  + "deployment.yml";
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
 			bw.write(line);
 			bw.flush();
@@ -240,7 +242,9 @@ public class CodeGeneratorMultiplemethods {
 	private static void updateDockerfile(List<Map<String, String>> list) throws IOException {
 
 		for (Map<String, String> map : list) {
-			targetDockerFilePath = projectPath + "\\" + map.get("name") + "\\src\\main\\docker\\Dockerfile";
+			//targetDockerFilePath = projectPath + "\\" + map.get("name") + "\\src\\main\\docker\\Dockerfile";
+			targetDockerFilePath = projectPath + "\\" + map.get("name") +"\\"+"Dockerfile";
+			System.out.println("path=================="+targetDockerFilePath);
 			File targetDockerFile = new File(targetDockerFilePath);
 			BufferedReader br = new BufferedReader(new FileReader(targetDockerFilePath));
 			String content = "";

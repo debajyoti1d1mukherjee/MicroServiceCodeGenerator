@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface IServiceDefReader {
 
-	public  List<Map<String, String>> readDefination(String srcDirPath,String srcSDLPath)throws Exception;
+	public  List<Map<String, String>> readDefination(String srcDirPath)throws Exception;
 }

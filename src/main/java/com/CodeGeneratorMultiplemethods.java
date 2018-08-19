@@ -59,6 +59,12 @@ public class CodeGeneratorMultiplemethods {
 
 	public static void main(String[] args) throws IOException, InterruptedException, URISyntaxException {
 		readConfigurationProperties();
+		if(null!= args && args.length >= 3){
+			srcRootPath = args[0];
+			projectPath = args[1];
+			dockerAccount = args[2];
+		}
+		
 		List<Map<String, String>> serviceList = null;
 		try {
 			serviceList = readServiceDef();
@@ -84,19 +90,26 @@ public class CodeGeneratorMultiplemethods {
 		int count = 0;
 		ResourceBundle mybundle = ResourceBundle.getBundle("com.configurations_multiple_methods_en_US");
 		ports = ResourceBundle.getBundle("com.ports_en_US");
-		projectPath = mybundle.getString("TARGET_PROJECT_PATH");
-		srcRootPath = mybundle.getString("SRC_PROJECT_ROOT_PATH");
+		if(null == projectPath || "".equals(projectPath)){
+			projectPath = mybundle.getString("TARGET_PROJECT_PATH");
+		}
+		if(null == srcRootPath || "".equals(srcRootPath)){
+			srcRootPath = mybundle.getString("SRC_PROJECT_ROOT_PATH");
+		}
+		if(null == dockerAccount || "".equals(dockerAccount)){
+			dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
+		}
+		
 		srcSettings = srcRootPath + "\\src\\main\\java\\tobecopied\\.settings";
 		srcMvn = srcRootPath + "\\src\\main\\java\\tobecopied\\.mvn";
 		srcTobCopied = srcRootPath + "\\src\\main\\java\\tobecopied\\files";
 		srcProperties = srcRootPath + "\\src\\main\\java\\tobecopied\\properties";
 		srcDocker = srcRootPath + "\\src\\main\\java\\tobecopied\\docker";
 		srcTemplateService = srcRootPath + "\\src\\main\\java\\com\\TemplateService";
-		srcSDLPath = srcRootPath + "\\src\\main\\java\\com\\usage.yml";
+		//srcSDLPath = srcRootPath + "\\src\\main\\java\\com\\usage.yml";
 		srcJSONRequestPath = srcRootPath + "\\src\\main\\java\\com\\request.json";
 		srcJSONRespPath = srcRootPath + "\\src\\main\\java\\com\\response.json";
-		srcJavaPath = srcRootPath + "\\src\\main\\java";
-		dockerAccount = mybundle.getString("DOCKER_ACCOUNT_NAME");
+		srcJavaPath = srcRootPath + "\\src\\main\\java";		
 		srcRespObjectPath = srcRootPath + "\\src\\main\\java\\";
 		srcDirPath = srcRootPath + "\\src\\input_yml";
 		getLastUsedDockerPort(count, ports);
@@ -304,8 +317,8 @@ public class CodeGeneratorMultiplemethods {
 					String[] responseArr = response.split("&");
 					String responseName = responseArr[0];
 					String responseDef = responseArr[1];
-					// String[] fallBckMethodArray = fallBckMethod.split("=");
-					// String fallBackMethodRequired = fallBckMethodArray[1];
+					String[] fallBckMethodArray = fallBckMethod.split("=");
+					String fallBackMethodRequired = fallBckMethodArray[1];
 
 					// methodAppender = createMethod(map, templateGetMethod,
 					// templatePostMethod, methodAppender,
@@ -316,7 +329,7 @@ public class CodeGeneratorMultiplemethods {
 					methodAppender = ServiceAssembler.createMethod(map, templateGetMethod, templatePostMethod,
 							methodAppender, methodType, methodName, requestName, requestDef, responseName, responseDef,
 							getFallBackMethod, postFallBackMethod, srcRespObjectPath, projectPath, "",
-							srcJSONRequestPath, srcJSONRespPath, srcJavaPath);
+							srcJSONRequestPath, srcJSONRespPath, srcJavaPath,fallBackMethodRequired);
 
 				}
 			}
@@ -353,7 +366,7 @@ public class CodeGeneratorMultiplemethods {
 
 	private static List<Map<String, String>> readServiceDef() throws Exception {
 		IServiceDefReader reader = ServiceDefReaderFactory.getServiceDefReader("default");
-		return reader.readDefination(srcDirPath, srcSDLPath);
+		return reader.readDefination(srcDirPath);
 	}
 
 	private static void createDirectoryStructure(List<Map<String, String>> list) {

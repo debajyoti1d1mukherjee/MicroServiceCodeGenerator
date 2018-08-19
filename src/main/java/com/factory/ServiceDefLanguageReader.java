@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ServiceDefLanguageReader implements IServiceDefReader {
 
-	public  List<Map<String, String>> readDefination(String srcDirPath,String srcSDLPath) throws IOException{
+	public  List<Map<String, String>> readDefination(String srcDirPath) throws IOException{
 		BufferedReader br = null;
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		File directory = new File(srcDirPath);
@@ -20,9 +20,10 @@ public class ServiceDefLanguageReader implements IServiceDefReader {
 			// File sdlFile = fileList[0];
 			if (null != sdlFile) {
 				br = new BufferedReader(new FileReader(sdlFile));
-			} else {
-				br = new BufferedReader(new FileReader(srcSDLPath));
-			}
+			} 
+//			else {
+//				br = new BufferedReader(new FileReader(srcSDLPath));
+//			}
 
 			String sCurrentLine;
 			Map<String, String> map = new HashMap<String, String>();

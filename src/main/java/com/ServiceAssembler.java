@@ -15,7 +15,7 @@ public class ServiceAssembler {
 	public static String createMethod(Map<String, String> map, String templateGetMethod, String templatePostMethod,
 			String methodAppender, String methodType, String methodName, String requestName, String requestDef,
 			String responseName, String responseDef , String getFallBckMethod , String postFallBckMethod , String respObjPath , String projPath , String targetRespBean, 
-			String srcJSONRequestPath , String srcJSONRespPath , String srcJavaPath) throws IOException {
+			String srcJSONRequestPath , String srcJSONRespPath , String srcJavaPath , String fallbackRequired) throws IOException {
 		if ("GET".equalsIgnoreCase(methodType)) {
 			createBean(responseDef, map.get("name"), "response", responseName , null, srcJSONRespPath,srcJavaPath);
 			String tempGetMethod = templateGetMethod;
@@ -26,7 +26,9 @@ public class ServiceAssembler {
 			tempGetMethod = tempGetMethod.replaceAll("TEMPLATE_METHOD_TYPE", methodType);
 			methodAppender = methodAppender + "\n";
 			methodAppender = methodAppender + tempGetMethod;
-			methodAppender = appendGetFallBackMethod(map, methodAppender, methodName, getFallBckMethod, capRespName);
+			if("Y".equalsIgnoreCase(fallbackRequired)){
+				methodAppender = appendGetFallBackMethod(map, methodAppender, methodName, getFallBckMethod, capRespName);
+			}
 			
 		} else if ("POST".equalsIgnoreCase(methodType)) {
 			createBean(requestDef, map.get("name"), "request", requestName ,srcJSONRequestPath , null,srcJavaPath);
@@ -43,8 +45,10 @@ public class ServiceAssembler {
 			tempPostMethod = tempPostMethod.replaceAll("TEMPLATE_METHOD_TYPE", methodType);
 			methodAppender = methodAppender + "\n";
 			methodAppender = methodAppender + tempPostMethod;
-			methodAppender = appendPostFallBackMethod(map, methodAppender, methodName, postFallBckMethod, capRespName,
+			if("Y".equalsIgnoreCase(fallbackRequired)){
+				methodAppender = appendPostFallBackMethod(map, methodAppender, methodName, postFallBckMethod, capRespName,
 					capReqName);
+			}
 		}
 		return methodAppender;
 	}

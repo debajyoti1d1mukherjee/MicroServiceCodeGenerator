@@ -1,5 +1,0 @@
-name:Usage
-UsageRequest:{id=String}
-UsageResponse:{id=String,usageamount=String}
-fallbackmathodrequired:Y
-crudrequired:N

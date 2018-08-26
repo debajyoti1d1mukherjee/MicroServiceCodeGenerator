@@ -158,7 +158,7 @@ public class CodeGeneratorMultiplemethods {
 		int port = Integer.parseInt(dockerPort);
 		for (Map<String, String> map : list) {
 			port = port + 10;
-			targetServiceProperties = projectPath + "\\" + map.get("name")
+			targetServiceProperties = projectPath + "\\" + map.get("name").trim().toLowerCase()
 					+ "\\src\\main\\resources\\bootstrap.properties";
 			BufferedReader br = new BufferedReader(new FileReader(targetServiceProperties));
 			String content = "";
@@ -167,7 +167,7 @@ public class CodeGeneratorMultiplemethods {
 				line = line + content;
 				line = line + "\n";
 			}
-			line = line.replaceAll("template_name", map.get("name"));
+			line = line.replaceAll("template_name", map.get("name").trim().toLowerCase());
 			line = line.replaceAll("template_port", String.valueOf(port).trim().replaceAll("\\s+", ""));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(targetServiceProperties));
 			bw.write(line);
@@ -188,11 +188,12 @@ public class CodeGeneratorMultiplemethods {
 				line = line + content;
 				line = line + "\n";
 			}
-			line = line.replaceAll("template_group", map.get("name") + "-code_generation_automation");
-			line = line.replaceAll("template_artifact", map.get("name"));
-			line = line.replaceAll("template.jar", map.get("name") + ".jar");
-			line = line.replaceAll("template_image", map.get("name"));
-			line = line.replaceAll("template_name", map.get("name"));
+			String root = map.get("name").trim().toLowerCase();
+			line = line.replaceAll("template_group", root + "-code_generation_automation");
+			line = line.replaceAll("template_artifact",root);
+			line = line.replaceAll("template.jar", root + ".jar");
+			line = line.replaceAll("template_image", root);
+			line = line.replaceAll("template_name", root);
 			String path = targetMvnConfPath;
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
 			bw.write(line);
@@ -212,7 +213,7 @@ public class CodeGeneratorMultiplemethods {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templateservice", map.get("name").trim());
+			line = line.replaceAll("templateservice", map.get("name").trim().trim().toLowerCase());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			//String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "service.yml";
 			String path = projectPath + "\\" + map.get("name") + "\\" +  "service.yml";
@@ -228,7 +229,7 @@ public class CodeGeneratorMultiplemethods {
 
 	private static void updateDeploymentYML(List<Map<String, String>> list) throws IOException {
 		for (Map<String, String> map : list) {
-			targetTemplateDeploymentPath = projectPath + "\\" + map.get("name") + "\\templatedeployment.yaml";
+			targetTemplateDeploymentPath = projectPath + "\\" + map.get("name").trim().toLowerCase() + "\\templatedeployment.yaml";
 			BufferedReader br = new BufferedReader(new FileReader(targetTemplateDeploymentPath));
 			String content = "";
 			String line = "";
@@ -237,7 +238,7 @@ public class CodeGeneratorMultiplemethods {
 				line = line + "\n";
 			}
 			String port = dockerPortMap.get(map.get("name"));
-			line = line.replaceAll("templatename", map.get("name").trim());
+			line = line.replaceAll("templatename", map.get("name").trim().toLowerCase());
 			line = line.replaceAll("templateport", dockerPortMap.get(map.get("name")));
 			line = line.replaceAll("templateimage", dockerAccount + "\\/" + map.get("name").trim().toLowerCase());
 			//String path = projectPath + "\\" + map.get("name") + "\\" + map.get("name") + "deployment.yml";
@@ -254,9 +255,11 @@ public class CodeGeneratorMultiplemethods {
 
 	private static void updateDockerfile(List<Map<String, String>> list) throws IOException {
 
+		
 		for (Map<String, String> map : list) {
+			String root =  map.get("name").trim().toLowerCase();
 			//targetDockerFilePath = projectPath + "\\" + map.get("name") + "\\src\\main\\docker\\Dockerfile";
-			targetDockerFilePath = projectPath + "\\" + map.get("name") +"\\"+"Dockerfile";
+			targetDockerFilePath = projectPath + "\\" + root +"\\"+"Dockerfile";
 			System.out.println("path=================="+targetDockerFilePath);
 			File targetDockerFile = new File(targetDockerFilePath);
 			BufferedReader br = new BufferedReader(new FileReader(targetDockerFilePath));
@@ -266,8 +269,8 @@ public class CodeGeneratorMultiplemethods {
 				line = line + content;
 				line = line + "\n";
 			}
-			line = line.replaceAll("template_app", map.get("name"));
-			String replaceWith = "/target/" + map.get("name") + "-0.0.1-SNAPSHOT.jar";
+			line = line.replaceAll("template_app", root);
+			String replaceWith = "/target/" + root+ "-0.0.1-SNAPSHOT.jar";
 			line = line.replaceAll("/target/XtemplateX_app.jar", replaceWith);
 			line = line.replaceAll("template_port", dockerPortMap.get(map.get("name")));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(targetDockerFilePath));
@@ -371,32 +374,33 @@ public class CodeGeneratorMultiplemethods {
 
 	private static void createDirectoryStructure(List<Map<String, String>> list) {
 		for (Map<String, String> map : list) {
-			File file = new File(projectPath + "\\" + map.get("name"));
+			String root = map.get("name").trim().toLowerCase();
+			File file = new File(projectPath + "\\" + root);
 			if (!file.exists()) {
 				file.mkdir();
 			}
-			File srcJava = new File(projectPath + "\\" + map.get("name") + "\\src\\main\\java\\com");
+			File srcJava = new File(projectPath + "\\" + root + "\\src\\main\\java\\com");
 			if (!srcJava.exists()) {
 				srcJava.mkdirs();
 			}
-			File resourcesDir = new File(projectPath + "\\" + map.get("name") + "\\src\\main\\resources");
+			File resourcesDir = new File(projectPath + "\\" + root + "\\src\\main\\resources");
 			if (!resourcesDir.exists()) {
 				resourcesDir.mkdirs();
 			}
-			File dockerDir = new File(projectPath + "\\" + map.get("name") + "\\src\\main\\docker");
+			File dockerDir = new File(projectPath + "\\" +root + "\\src\\main\\docker");
 			if (!dockerDir.exists()) {
 				dockerDir.mkdirs();
 				System.out.println("dockerDir=====" + dockerDir);
 			}
-			File targetDir = new File(projectPath + "\\" + map.get("name") + "\\target");
+			File targetDir = new File(projectPath + "\\" +root + "\\target");
 			if (!targetDir.exists()) {
 				targetDir.mkdir();
 			}
-			File settings = new File(projectPath + "\\" + map.get("name") + "\\.settings");
+			File settings = new File(projectPath + "\\" + root + "\\.settings");
 			if (!settings.exists()) {
 				settings.mkdir();
 			}
-			File mvn = new File(projectPath + "\\" + map.get("name") + "\\.mvn");
+			File mvn = new File(projectPath + "\\" + root + "\\.mvn");
 			if (!mvn.exists()) {
 				mvn.mkdir();
 			}

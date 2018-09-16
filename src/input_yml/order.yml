@@ -1,0 +1,5 @@
+'name:order
+  METHOD:GET;getOrder;getOrderRequest&{id=String};getOrderResponse&{balance=String};fallbackmathodrequired=Y
+  METHOD:POST;saveOrder;saveOrderRequest&{id=String,name=String};saveOrderResponse&{balance=String,name=String};fallbackmathodrequired=Y
+  METHOD:GET;getOrder1;getOrderRequest1&{id=String};getOrderResponse1&{balance=String};fallbackmathodrequired=Y
+  METHOD:POST;saveOrder1;saveOrderRequest1&{id=String,name=String};saveOrderResponse1&{balance=String,name=String};fallbackmathodrequired=Y'

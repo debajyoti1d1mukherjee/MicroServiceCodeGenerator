@@ -81,6 +81,7 @@ public class CodeGeneratorMultiplemethods {
 			updateDockerfile(serviceList);
 			updateDeploymentYML(serviceList);
 			updateServiceYML(serviceList);
+			updateProjectFile(serviceList);
 		}else{
 			System.out.println("--INVALID SDL OR NO SDL--");
 		}
@@ -201,6 +202,26 @@ public class CodeGeneratorMultiplemethods {
 			bw.close();
 		}
 	}
+	
+	private static void updateProjectFile(List<Map<String, String>> list) throws IOException {
+		for (Map<String, String> map : list) {
+			String targetProjectFile = projectPath + "\\" + map.get("name") + "\\.project";
+			BufferedReader br = new BufferedReader(new FileReader(targetProjectFile));
+			String content = "";
+			String line = "";
+			while ((content = br.readLine()) != null) {
+				line = line + content;
+				line = line + "\n";
+			}
+			String root = map.get("name").trim().toLowerCase();
+			line = line.replaceAll("templateName", root);
+			String path = targetProjectFile;
+			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+			bw.write(line);
+			bw.flush();
+			bw.close();
+		}
+	}
 
 	private static void updateServiceYML(List<Map<String, String>> list) throws IOException {
 		for (Map<String, String> map : list) {
@@ -306,7 +327,7 @@ public class CodeGeneratorMultiplemethods {
 			Set<Map.Entry<String, String>> set = map.entrySet();
 			String methodAppender = "";
 			for (Map.Entry<String, String> me : set) {
-				if (me.getKey().contains("Method")) {
+				if ((me.getKey().trim().contains("Method"))||(me.getKey().trim().contains("METHOD"))) {
 					String methodStr = me.getValue();
 					String[] methodStrArr = methodStr.split(";");
 					String methodType = methodStrArr[0];

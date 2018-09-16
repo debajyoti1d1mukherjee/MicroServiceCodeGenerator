@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="com.deb.msprojectgenerator.AppTest" time="0.002" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="com.deb.msprojectgenerator.AppTest" time="0" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\software\jdk8\jdk8\bin"/>
@@ -54,14 +54,16 @@
     <property name="java.version" value="1.8.0_101"/>
     <property name="java.ext.dirs" value="C:\software\jdk8\jdk8\lib\ext;C:\windows\Sun\Java\lib\ext"/>
     <property name="sun.boot.class.path" value="C:\software\jdk8\jdk8\lib\resources.jar;C:\software\jdk8\jdk8\lib\rt.jar;C:\software\jdk8\jdk8\lib\sunrsasign.jar;C:\software\jdk8\jdk8\lib\jsse.jar;C:\software\jdk8\jdk8\lib\jce.jar;C:\software\jdk8\jdk8\lib\charsets.jar;C:\software\jdk8\jdk8\lib\jfr.jar;C:\software\jdk8\jdk8\classes"/>
+    <property name="sun.stderr.encoding" value="cp437"/>
     <property name="java.vendor" value="Oracle Corporation"/>
     <property name="maven.home" value="C:\software\maven_3.5.2\apache-maven-3.5.2-bin\apache-maven-3.5.2\bin\.."/>
     <property name="file.separator" value="\"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.stdout.encoding" value="cp437"/>
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.deb.msprojectgenerator.AppTest" name="testApp" time="0.002"/>
+  <testcase classname="com.deb.msprojectgenerator.AppTest" name="testApp" time="0"/>
 </testsuite>

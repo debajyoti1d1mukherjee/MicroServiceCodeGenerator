@@ -1,5 +1,5 @@
 
-package com.Usage;
+package com.order;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,30 +15,30 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "usage",
+    "balance",
     "name"
 })
-public class SaveUsageResponse {
+public class SaveOrderResponse1 {
 
-    @JsonProperty("usage")
-    private String usage;
+    @JsonProperty("balance")
+    private String balance;
     @JsonProperty("name")
     private String name;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("usage")
-    public String getUsage() {
-        return usage;
+    @JsonProperty("balance")
+    public String getBalance() {
+        return balance;
     }
 
-    @JsonProperty("usage")
-    public void setUsage(String usage) {
-        this.usage = usage;
+    @JsonProperty("balance")
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 
-    public SaveUsageResponse withUsage(String usage) {
-        this.usage = usage;
+    public SaveOrderResponse1 withBalance(String balance) {
+        this.balance = balance;
         return this;
     }
 
@@ -52,7 +52,7 @@ public class SaveUsageResponse {
         this.name = name;
     }
 
-    public SaveUsageResponse withName(String name) {
+    public SaveOrderResponse1 withName(String name) {
         this.name = name;
         return this;
     }
@@ -72,14 +72,14 @@ public class SaveUsageResponse {
         this.additionalProperties.put(name, value);
     }
 
-    public SaveUsageResponse withAdditionalProperty(String name, Object value) {
+    public SaveOrderResponse1 withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(usage).append(name).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(balance).append(name).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -87,11 +87,11 @@ public class SaveUsageResponse {
         if (other == this) {
             return true;
         }
-        if ((other instanceof SaveUsageResponse) == false) {
+        if ((other instanceof SaveOrderResponse1) == false) {
             return false;
         }
-        SaveUsageResponse rhs = ((SaveUsageResponse) other);
-        return new EqualsBuilder().append(usage, rhs.usage).append(name, rhs.name).append(additionalProperties, rhs.additionalProperties).isEquals();
+        SaveOrderResponse1 rhs = ((SaveOrderResponse1) other);
+        return new EqualsBuilder().append(balance, rhs.balance).append(name, rhs.name).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
 }
